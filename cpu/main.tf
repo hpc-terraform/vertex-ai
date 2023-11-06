@@ -25,3 +25,11 @@ module "minjun-cpu-16" {
   hostname             = "minjun-cpu-16"
 }
 
+module "joe-cpu-16" {
+  source = "./modules/instance"
+  image_name           = "common-cpu-notebooks-v20230925-debian-11-py310"
+  boot_disk_size_gb    = 100
+  machine_type         = "n1-standard-16"
+  user                 = "joe"
+  hostname             = "joe-cpu-16"
+}
