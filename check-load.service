@@ -1,0 +1,9 @@
+# File: /etc/systemd/system/check-load.service
+[Unit]
+Description=Check system load and shutdown if it's been low for 30 minutes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/check-load.sh
+
+

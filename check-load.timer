@@ -1,0 +1,10 @@
+# File: /etc/systemd/system/check-load.timer
+[Unit]
+Description=Run load check script every minute
+
+[Timer]
+OnCalendar=*:0/1
+Persistent=true
+
+[Install]
+WantedBy=timers.target
