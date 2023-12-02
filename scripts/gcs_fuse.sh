@@ -15,8 +15,8 @@ else
 fi
 
 # Step 2: Create mount point directory
-MOUNT_POINT="/mnt/sep_bucket"
-MOUNT_POINT2="/mnt/scratch_bucket"
+MOUNT_POINT="/mnt/share"
+MOUNT_POINT2="/mnt/scratch"
 
 mkdir -p "$MOUNT_POINT"
 chmod 777 "$MOUNT_POINT"
@@ -25,8 +25,8 @@ mkdir -p "$MOUNT_POINT2"
 chmod 777 "$MOUNT_POINT2"
 
 # Step 3: Add mount entry to /etc/fstab if not already present
-FSTAB_ENTRY="sep-bucket-home /mnt/sep_bucket gcsfuse _netdev,allow_other,file_mode=666,dir_mode=777 0 0"
-FSTAB2_ENTRY="scratch-sep /mnt/scratch_bucket gcsfuse _netdev,allow_other,file_mode=666,dir_mode=777 0 0"
+FSTAB_ENTRY="@SHARE_BUCKET@ /mnt/share gcsfuse _netdev,allow_other,file_mode=666,dir_mode=777 0 0"
+FSTAB2_ENTRY="@SCRATCH_BUCKET@ /mnt/scratch gcsfuse _netdev,allow_other,file_mode=666,dir_mode=777 0 0"
 
 if grep -Fxq "$FSTAB_ENTRY" /etc/fstab; then
    echo "fstab entry is already present."

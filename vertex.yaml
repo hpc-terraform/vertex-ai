@@ -1,0 +1,71 @@
+blueprint_name: vertex-ai
+
+vars:
+  project_id: earth-clapp  ## Set GCP Project ID Here ##
+  deployment_name: vertex-toolkit
+  region: us-central1
+  script_bucket:
+
+
+deployment_groups:
+- group: primary
+  modules:
+  - id: network1
+    source: ../hpc-toolkit/modules/network/vpc
+    settings:
+      network_name:  clapp-net
+      subnetwork_name:  clapp-sub
+  - id: role_bucket
+    source: ./modules/gcp_custom_role
+    settings:
+      title: "storage-bucket-list"
+      role_id: storage_bucket_list
+      description: "Custom role with specific storage permissions"
+      permissions:
+        - storage.buckets.get
+        - storage.buckets.list
+        - storage.objects.get
+        - storage.objects.list
+  - id: role_vertex
+    source: ./modules/gcp_custom_role
+    settings:
+      title: "limited-vertex-controls"
+      role_id: limited_vertex_controls
+      description: "Vertex pemissions to turn on/off, etc"
+      permissions:
+        - aiplatform.notebookRuntimes.list
+        - aiplatform.notebookRuntimes.start
+        - notebooks.instances.start
+        - notebooks.instances.stop
+  - id: vertex-node-service-account
+    source: ../hpc-toolkit/community/modules/project/service-account
+    settings:
+      project_id: $(vars.project_id)
+      name: instance-acct
+      project_roles:
+      - iam.serviceAccountUser
+      - storage.objectViewer
+      - aiplatform.user
+
+  - id: vertex-user-service-account
+    source: ./modules/iam_add_permissions
+    settings:
+      project_id: $(vars.project_id)
+      group_email: "sdss-gcp_sep-storage-vertex-ai@stanford.edu"
+      roles:
+        browser : roles/browser
+        compute_networkViewer: roles/compute.networkViewer
+        compute_osLogin: roles/compute.osLogin
+        compute_viewer: roles/compute.viewer
+        iap_tunnelAccessor: roles/iap.tunnelResourceAccessor
+        notebooks_viewer": roles/notebooks.viewer
+        serviceAccount_user: roles/iam.serviceAccountUser
+        storage_objectViewer: roles/storage.objectViewer
+        aiplatform_user: roles/aiplatform.user
+        aiplatform_viewer: roles/aiplatform.viewer
+        storage_bucket_list: $(role_bucket.id)
+        vertex_ai_start: $(role_vertex.id)
+
+
+
+

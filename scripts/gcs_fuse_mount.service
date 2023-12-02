@@ -3,6 +3,7 @@ Description=Mount GCS Bucket using gcsfuse
 After=network-online.target
 
 [Service]
+User=jupyter
 ExecStart=/usr/local/bin/gcs_fuse.sh
 Type=oneshot
 RemainAfterExit=yes

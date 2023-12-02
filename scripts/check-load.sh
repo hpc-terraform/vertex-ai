@@ -38,9 +38,9 @@ if (( $(echo "$LOAD < $LOAD_THRESHOLD" | bc) )) && ( [ -z "$GPU_LOW_USAGE" ] || 
     ELAPSED_TIME=$(($CURRENT_TIME - $START_TIME))
 
     # 30 minutes in seconds
-    THIRTY_MINUTES=1800
+    SECONDS_KILL=2100
 
-    if [ $ELAPSED_TIME -ge $THIRTY_MINUTES ]; then
+    if [ $ELAPSED_TIME -ge $SECONDS_KILL ]; then
       # If the load has been low for 30 minutes or more, shut down
       rm -f "$STATE_FILE"
       /sbin/shutdown now "Shutting down due to low load for 30+ minutes."
