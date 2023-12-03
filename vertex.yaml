@@ -4,7 +4,8 @@ vars:
   project_id: earth-clapp  ## Set GCP Project ID Here ##
   deployment_name: vertex-toolkit
   region: us-central1
-  script_bucket:
+  share_bucket: bob-share
+  scratch_bucket: bob-scratch
 
 
 deployment_groups:
@@ -66,6 +67,25 @@ deployment_groups:
         storage_bucket_list: $(role_bucket.id)
         vertex_ai_start: $(role_vertex.id)
 
-
-
-
+  - id: share-bucket
+    source: ./modules/bucket
+    settings:
+      service_account_email: $(vertex-node-service-account.service_account_email)
+      bucket_name: $(vars.share_bucket) 
+  - id: scratch-bucket
+    source: ./modules/bucket
+    settings:
+      service_account_email: $(vertex-node-service-account.service_account_email)
+      bucket_name: $(vars.scratch_bucket) 
+  
+  - id: bob-vertex-instance-test
+    use:
+    - network1
+    source: ./modules/vertex/cpunew
+    settings:
+      boot_disk_size_gb: 50
+      hostname: bob-test-cpu
+      machine_type: n1-standard-8
+      user: clapp
+      image_name: pytorch-latest-gpu-v20230925-debian-11-py310
+      service_account_email: $(vertex-node-service-account.service_account_email)
