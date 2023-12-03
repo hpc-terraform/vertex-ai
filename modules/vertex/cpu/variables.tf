@@ -1,14 +1,28 @@
 
-variable "hostname" {
-  description = "Name of the webserver instance"
+variable "project_id" {
+  description = "Project in which Google Cloud resources will be created"
   type        = string
 }
 
 
-variable "project_id" {
-  description = "The GCP project ID"
+variable "threads_per_core" {
+  description = "Sets the number of threads per physical core"
+  type        = number
+  default     = 1
+}
+
+variable "hostname" {
+  description = "Name of the webserver instance"
   type        = string
-  default      = "sdss-ching-yao"
+}
+variable "scratch_bucket" {
+  description = "The GCP scratch bucket"
+  type        = string
+}
+
+variable "share_bucket" {
+  description = "The GCP share bucket"
+  type        = string
 }
 
 variable "region" {
@@ -64,19 +78,12 @@ variable "gpu_type" {
   type        = string
   default     = "NVIDIA_TESLA_V100"
 }
-variable "network" {
+variable "network_self_link" {
   description = "The name of the network"
   type        = string
-  default      = "https://www.googleapis.com/compute/v1/projects/sdss-ching-yao/global/networks/yao-net"
 }
 
-variable "subnetwork" {
+variable "subnetwork_self_link" {
   description = "The name of the sub-network"
   type        = string
-  default      = "https://www.googleapis.com/compute/v1/projects/sdss-ching-yao/regions/us-central1/subnetworks/yao-sub"
-}
-variable "build_bucket" {
-  description = "The name of the second storage bucket"
-  type        = string
-  default     = "yao-build"
 }

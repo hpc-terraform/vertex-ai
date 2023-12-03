@@ -87,3 +87,9 @@ variable "subnetwork_self_link" {
   description = "The name of the sub-network"
   type        = string
 }
+
+variable "image_project"{
+   description = "The project to grab image from"
+   type = string
+   default = "deeplearning-platform-release"
+}

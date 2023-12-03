@@ -78,13 +78,24 @@ deployment_groups:
       service_account_email: $(vertex-node-service-account.service_account_email)
       bucket_name: $(vars.scratch_bucket) 
   
-  - id: bob-vertex-instance-test
+  - id: bob-cpu
     use:
     - network1
-    source: ./modules/vertex/cpunew
+    source: ./modules/vertex/cpu
     settings:
       boot_disk_size_gb: 50
       hostname: bob-test-cpu
+      machine_type: n1-standard-8
+      user: clapp
+      image_name: pytorch-latest-gpu-v20230925-debian-11-py310
+      service_account_email: $(vertex-node-service-account.service_account_email)
+  - id: bob-gpu
+    use:
+    - network1
+    source: ./modules/vertex/gpu
+    settings:
+      boot_disk_size_gb: 50
+      hostname: bob-test-gpu
       machine_type: n1-standard-8
       user: clapp
       image_name: pytorch-latest-gpu-v20230925-debian-11-py310

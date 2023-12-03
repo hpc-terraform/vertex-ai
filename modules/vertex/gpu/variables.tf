@@ -8,7 +8,13 @@ variable "hostname" {
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default      = "sdss-ching-yao"
+}
+
+
+variable "image_project"{
+   description = "The project to grab image from"
+   type = string
+   default = "deeplearning-platform-release"
 }
 
 variable "region" {

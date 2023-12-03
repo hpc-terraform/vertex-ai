@@ -18,7 +18,7 @@ resource "google_notebooks_instance" "vertex_ai_instance" {
 
   vm_image {
 
-    project    = "deeplearning-platform-release"
+    project    = var.image_project
     image_name = var.image_name # You may need to change this to a custom image with Python 3.12
   }
 

@@ -1,8 +1,3 @@
-provider "google" {
-  # Define your GCP project and region if not set via gcloud or environment variables
-  project              = var.project_id
-  region               = var.region
-}
 
 resource "google_notebooks_instance" "vertex_ai_instance" {
   # Replace with the appropriate project and location
@@ -21,12 +16,8 @@ resource "google_notebooks_instance" "vertex_ai_instance" {
   boot_disk_type    = "PD_STANDARD"
   boot_disk_size_gb = var.boot_disk_size_gb # Adjust the size as necessary
 
-  # Container image configuration for Python 3.12
-  # Please note: At my last knowledge cutoff in January 2022, Python 3.12 was not released,
-  # so you would typically reference an existing container image that has the Python version
-  # you require. You might need to build a custom container image with Python 3.12 if it's
-  # available and not provided by Google in their default container images.
   vm_image {
+
     project    = "deeplearning-platform-release"
     image_name = var.image_name # You may need to change this to a custom image with Python 3.12
   }
@@ -34,9 +25,10 @@ resource "google_notebooks_instance" "vertex_ai_instance" {
   
   labels = {
     "user" = var.user
-    "machine_type" = "cpu"
+    "machine_type" = "gpu"
   }
-
+  network  = var.network_self_link
+  subnet = var.subnetwork_self_link
 
 metadata = {
   proxy-mode         = "project-editors"
@@ -54,17 +46,19 @@ metadata = {
 
     USER=${var.user}
     echo "after user $USER"
-
-
+    
     echo "about to copy"
     # Download data or scripts from the GitHub repository
     echo "about to download scripts"
     curl -o /usr/local/bin/check-load.sh https://raw.githubusercontent.com/hpc-terraform/vertex-ai/main/scripts/check-load.sh
     curl -o /usr/local/bin/gcs_fuse.sh https://raw.githubusercontent.com/hpc-terraform/vertex-ai/main/scripts/gcs_fuse.sh
-    SCRATCH_BUCKET_NAME=${var.scratch_bucket}
-    sed -i "s|@SCRATCH_BUCKET@|${SCRATCH_BUCKET_NAME}|g" /usr/local/bin/gcs_fuse.sh
-    SHARE_BUCKET_NAME=${var.scratch_bucket}
-    sed -i "s|@SHARE_BUCKET@|${SHARE_BUCKET_NAME}|g" /usr/local/bin/gcs_fuse.sh
+    SCRATCH_BUCKET_NAME="${var.scratch_bucket}"
+    SHARE_BUCKET_NAME="${var.share_bucket}"
+
+    # Using double dollar signs to prevent Terraform from interpreting these as its own variables
+    sed -i "s|@SCRATCH_BUCKET@|$${SCRATCH_BUCKET_NAME}|g" /usr/local/bin/gcs_fuse.sh
+    sed -i "s|@SHARE_BUCKET@|$${SHARE_BUCKET_NAME}|g" /usr/local/bin/gcs_fuse.sh
+
 
     echo "about to set permissions and execute scripts"
     chmod +x /usr/local/bin/check-load.sh
@@ -113,11 +107,6 @@ metadata = {
 }
 
 
-  
-  network              = var.network
-  subnet               = var.subnetwork
-
-  
 }
 
 
