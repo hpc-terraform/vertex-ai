@@ -12,28 +12,6 @@ vars:
 deployment_groups:
 - group: primary
   modules:
-  - id: required_services
-    source: ../hpc-toolkit/community/modules/project/service-enablement
-    settings:
-      gcp_service_list: [
-      "compute.googleapis.com",
-      "deploymentmanager.googleapis.com",
-      "endpoints.googleapis.com",
-      "iam.googleapis.com",
-      "iamcredentials.googleapis.com",
-      "iap.googleapis.com",
-      "logging.googleapis.com",
-      "monitoring.googleapis.com",
-      "networkconnectivity.googleapis.com", 
-      "cloudresourcemanager.googleapis.com",
-      "oslogin.googleapis.com",
-      "pubsub.googleapis.com",
-      "storage-api.googleapis.com",
-      "storage-component.googleapis.com",
-      "storage.googleapis.com",
-      "aiplatform.googleapis.com"
-    ]
-
   - id: network1
     use:
     - required_services
