@@ -1,10 +1,20 @@
-variable "bucket_name" {
-  description = "The name of the bucket to create"
+variable "service_account_email" {
+  description = "Email of the service account to have access to the bucket"
   type        = string
 }
 
-variable "service_account_email" {
-  description = "The email of the service account which will have access to the bucket"
+variable "group_email" {
+  description = "Email of the Google Group to have access to the bucket"
+  type        = string
+}
+
+variable "project_id" {
+  description = "The project ID"
+  type        = string
+}
+
+variable "bucket_name" {
+  description = "The name of the bucket to create"
   type        = string
 }
 
@@ -19,4 +29,3 @@ variable "force_destroy" {
   type        = bool
   default     = false
 }
-

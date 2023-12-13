@@ -11,38 +11,12 @@ vars:
 deployment_groups:
 - group: primary
   modules:
-  - id: required_services
-    source: ../hpc-toolkit/community/modules/project/service-enablement
-    settings:
-      gcp_service_list: [
-      "compute.googleapis.com",
-      "deploymentmanager.googleapis.com",
-      "endpoints.googleapis.com",
-      "iam.googleapis.com",
-      "iamcredentials.googleapis.com",
-      "iap.googleapis.com",
-      "logging.googleapis.com",
-      "monitoring.googleapis.com",
-      "networkconnectivity.googleapis.com", 
-      "cloudresourcemanager.googleapis.com",
-      "oslogin.googleapis.com",
-      "pubsub.googleapis.com",
-      "storage-api.googleapis.com",
-      "storage-component.googleapis.com",
-      "storage.googleapis.com",
-      "aiplatform.googleapis.com"
-    ]
-
   - id: network1
-    use:
-    - required_services
     source: ../hpc-toolkit/modules/network/vpc
     settings:
       network_name:  clapp-net
       subnetwork_name:  clapp-sub
   - id: role_bucket
-    use:
-    - required_services
     source: ./modules/gcp_custom_role
     settings:
       title: "storage-bucket-list"
@@ -54,8 +28,6 @@ deployment_groups:
         - storage.objects.get
         - storage.objects.list
   - id: role_vertex
-    use:
-    - required_services
     source: ./modules/gcp_custom_role
     settings:
       title: "limited-vertex-controls"
@@ -67,20 +39,22 @@ deployment_groups:
         - notebooks.instances.start
         - notebooks.instances.stop
   - id: vertex-node-service-account
-    use:
-    - required_services
-    source: ../hpc-toolkit/community/modules/project/service-account
+    source: ./modules/service_account
     settings:
       project_id: $(vars.project_id)
-      name: instance-acct
-      project_roles:
-      - iam.serviceAccountUser
-      - storage.objectViewer
-      - aiplatform.user
+      service_account_name: vertex-permissions
+      roles:
+        compute_osLogin: roles/compute.osLogin
+        compute_viewer: roles/compute.viewer
+        iap_tunnelAccessor: roles/iap.tunnelResourceAccessor
+        notebooks_viewer: roles/notebooks.viewer
+        serviceAccount_user: roles/iam.serviceAccountUser
+        storage_objectViewer: roles/storage.objectViewer
+        aiplatform_user: roles/aiplatform.user
+        storage_bucket_list: $(role_bucket.id)
+
 
   - id: vertex-user-service-account
-    use:
-    - required_services
     source: ./modules/iam_add_permissions
     settings:
       project_id: $(vars.project_id)
@@ -91,7 +65,7 @@ deployment_groups:
         compute_osLogin: roles/compute.osLogin
         compute_viewer: roles/compute.viewer
         iap_tunnelAccessor: roles/iap.tunnelResourceAccessor
-        notebooks_viewer": roles/notebooks.viewer
+        notebooks_viewer: roles/notebooks.viewer
         serviceAccount_user: roles/iam.serviceAccountUser
         storage_objectViewer: roles/storage.objectViewer
         aiplatform_user: roles/aiplatform.user
@@ -100,24 +74,21 @@ deployment_groups:
         vertex_ai_start: $(role_vertex.id)
 
   - id: share-bucket
-    use:
-    - required_services
     source: ./modules/bucket
     settings:
       service_account_email: $(vertex-node-service-account.service_account_email)
+      group_email: $(vertex-user-service-account.group_email)
       bucket_name: $(vars.share_bucket) 
   - id: scratch-bucket
-    use:
-    - required_services
     source: ./modules/bucket
     settings:
       service_account_email: $(vertex-node-service-account.service_account_email)
+      group_email: $(vertex-user-service-account.group_email)
       bucket_name: $(vars.scratch_bucket) 
   
   - id: bob-cpu
     use:
     - network1
-    - required_services
     source: ./modules/vertex/cpu
     settings:
       boot_disk_size_gb: 50
@@ -129,7 +100,6 @@ deployment_groups:
   - id: bob-gpu
     use:
     - network1
-    - required_services
     source: ./modules/vertex/gpu
     settings:
       boot_disk_size_gb: 50
