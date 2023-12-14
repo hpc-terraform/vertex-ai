@@ -1,7 +1,7 @@
 blueprint_name: vertex-ai
 
 vars:
-  project_id: <project_id>  ## Set GCP Project ID Here ##
+  project_id: earth-clapp  ## Set GCP Project ID Here ##
   deployment_name: vertex-toolkit
   region: us-central1
   share_bucket: bob-share
