@@ -7,6 +7,8 @@ vars:
   share_bucket: bob-share
   scratch_bucket: bob-scratch
   gcp_workgroup: sdss-gcp_sep-storage-vertex-ai@stanford.edu
+  network: bob-net
+  subnet: bob-sub
 
 
 deployment_groups:
@@ -15,8 +17,8 @@ deployment_groups:
   - id: network1
     source: ../hpc-toolkit/modules/network/vpc
     settings:
-      network_name:  clapp-net
-      subnetwork_name:  clapp-sub
+      network_name:  $(vars.network)
+      subnetwork_name:  $(vars.subnet)
   - id: role_bucket
     source: ./modules/gcp_custom_role
     settings:
